@@ -9,6 +9,8 @@ import com.springsecuritywithdb.entity.RefreshToken;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Integer> {
 
 	Optional<RefreshToken> findByToken(String token);
-
 	
+	Optional<RefreshToken> findByUserInfoId(int userId);
+	
+
 }

@@ -54,4 +54,8 @@ public class ProductService {
         repository.save(userInfo);
         return "user added to system ";
     }
+    
+    public UserInfo getUser(String userName) {
+    	return repository.findByName(userName).orElse(null);
+    }
 }

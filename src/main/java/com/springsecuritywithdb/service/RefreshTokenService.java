@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.springsecuritywithdb.entity.RefreshToken;
+import com.springsecuritywithdb.entity.UserInfo;
 import com.springsecuritywithdb.repository.RefreshTokenRepository;
 import com.springsecuritywithdb.repository.UserInfoRepository;
 
@@ -21,6 +22,8 @@ public class RefreshTokenService {
 	private UserInfoRepository userInfoRepository;
 
 	public RefreshToken createRefreshToken(String username) {
+		UserInfo uesr = userInfoRepository.findByName(username).get();
+		
 		RefreshToken refreshToken = RefreshToken.builder().userInfo(userInfoRepository.findByName(username).get())
 				.token(UUID.randomUUID().toString()).expiryDate(Instant.now().plusMillis(600000)).build();
 

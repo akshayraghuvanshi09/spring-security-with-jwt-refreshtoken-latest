@@ -4,7 +4,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.springsecuritywithdb.entity.RefreshToken;
 import com.springsecuritywithdb.entity.UserInfo;
+
+import jakarta.persistence.OneToOne;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +20,7 @@ public class UserInfoUserDetails implements UserDetails {
     private String name;
     private String password;
     private List<GrantedAuthority> authorities;
+  
 
     public UserInfoUserDetails(UserInfo userInfo) {
         name=userInfo.getName();
@@ -27,7 +31,7 @@ public class UserInfoUserDetails implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<? extends GrantedAuthority> getAuthorities(){
         return authorities;
     }
 

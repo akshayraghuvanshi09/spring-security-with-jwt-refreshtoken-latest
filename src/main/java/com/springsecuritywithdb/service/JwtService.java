@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import com.springsecuritywithdb.entity.UserInfo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,6 +20,9 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtService {
+	private static final String SESSION_ID = "SESSION_ID";
+	
+	private @Autowired UserSessionService userSessionService;
 
 
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
@@ -54,8 +60,17 @@ public class JwtService {
     }
 
 
-    public String generateToken(String userName){
+    public String generateToken(String userName, UserInfo userInfo, boolean session){
         Map<String,Object> claims=new HashMap<>();
+        if(session) {
+        	claims.put(SESSION_ID, userSessionService.saveSession(userInfo));
+        }else {
+        	String sessionId = userSessionService.getSession(userInfo.getId()).getId();
+        	claims.put(SESSION_ID, sessionId);
+        	if(!userSessionService.validateSession(sessionId)) {
+        		throw new RuntimeException("Session Already Expired...");
+        	}
+        }
         return createToken(claims,userName);
     }
 
@@ -72,4 +87,10 @@ public class JwtService {
         byte[] keyBytes= Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    public String extractSessionId(String token) {
+    	Claims claims = extractAllClaims(token);
+    	Object object = claims.get(SESSION_ID);
+    	return String.valueOf(object);
+	}
 }
